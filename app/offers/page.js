@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { getFirms, trustLabel } from "../../lib/firms";
+import { getFirms } from "../../lib/firms-data";
+import { trustLabel } from "../../lib/firms";
 
 export const metadata = {
   title: "Prop Firm Discount Codes — PayoutRadar",
   description: "Current verified discount codes for futures and forex prop firms.",
 };
 
-export default function Offers() {
-  const firms = getFirms();
+export const revalidate = 60;
+
+export default async function Offers() {
+  const firms = await getFirms();
   return (
     <main className="wrap section">
       <div className="eyebrow">Verified offers</div>

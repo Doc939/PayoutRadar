@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { getFirms } from "../lib/firms";
+import { getFirms } from "../lib/firms-data";
 import FirmTable from "../components/FirmTable";
 
-export default function Home() {
-  const firms = getFirms();
+export const revalidate = 60;
+
+export default async function Home() {
+  const firms = await getFirms();
   const avg = (firms.reduce((s, f) => s + f.trust, 0) / firms.length).toFixed(1);
 
   return (

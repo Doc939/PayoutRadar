@@ -83,7 +83,11 @@ export default function FirmTable({ firms }) {
                 <tr key={f.slug}>
                   <td>
                     <Link href={`/firms/${f.slug}`} className="firm-cell">
-                      <span className="firm-avatar">{f.name[0]}</span>
+                      {f.logoUrl ? (
+                        <img src={f.logoUrl} alt={`${f.name} logo`} className="firm-avatar-img" />
+                      ) : (
+                        <span className="firm-avatar">{f.name[0]}</span>
+                      )}
                       <span>
                         <span className="firm-name">{f.name}</span>
                         <br />

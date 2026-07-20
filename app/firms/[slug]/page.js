@@ -1,15 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getFirm, getFirms, trustLabel } from "../../../lib/firms";
+import { getFirm, getFirms } from "../../../lib/firms-data";
+import { trustLabel } from "../../../lib/firms";
 import TrustRadar from "../../../components/TrustRadar";
 
-export function generateStaticParams() {
-  return getFirms().map((f) => ({ slug: f.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const firms = await getFirms();
+  return firms.map((f) => ({ slug: f.slug }));
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const firm = getFirm(slug);
+  const firm = await getFirm(slug);
   if (!firm) return {};
   return {
     title: `${firm.name} Trust Score & Discount Code — PayoutRadar`,
@@ -25,7 +29,7 @@ const SUBS = [
 
 export default async function FirmPage({ params }) {
   const { slug } = await params;
-  const firm = getFirm(slug);
+  const firm = await getFirm(slug);
   if (!firm) notFound();
   const t = trustLabel(firm.trust);
 
@@ -36,7 +40,16 @@ export default async function FirmPage({ params }) {
           <div className="eyebrow">
             <Link href="/#firms">← All firms</Link>
           </div>
-          <h1>{firm.name}</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {firm.logoUrl && (
+              <img
+                src={firm.logoUrl}
+                alt={`${firm.name} logo`}
+                style={{ width: 48, height: 48, borderRadius: 12, border: "1px solid var(--line)", objectFit: "contain", background: "#fff" }}
+              />
+            )}
+            <h1 style={{ margin: 0 }}>{firm.name}</h1>
+          </div>
           <p className="muted" style={{ maxWidth: "40em" }}>{firm.blurb}</p>
           <p>
             {firm.markets.map((m) => (
